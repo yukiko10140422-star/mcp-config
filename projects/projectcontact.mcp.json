@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project",
+        "C:/dev/software/projectcontact"
+      ]
+    },
+    "github": {
+      "type": "stdio",
+      "command": "gh",
+      "args": [
+        "mcp-server"
+      ]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
+    },
+    "supabase": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase",
+        "--supabase-access-token",
+        "sb_publishable__XxJj8i8YaaiBXtnYfiozw_L3uNrU33",
+        "--project-id",
+        "czjdhvtbejywzhprwlbn"
+      ]
+    }
+  }
+}

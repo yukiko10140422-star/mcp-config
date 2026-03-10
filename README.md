@@ -2,13 +2,25 @@
 
 Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 
-## 含まれるMCPサーバー
+## MCPサーバー一覧
+
+| サーバー | タイプ | コマンド/URL | 使用プロジェクト |
+|---------|--------|------------|----------------|
+| **serena** | stdio | `uvx start-mcp-server` | projectcontact |
+| **github** | stdio | `gh mcp-server` | projectcontact |
+| **context7** | stdio | `npx @upstash/context7-mcp` | projectcontact |
+| **supabase** | stdio | `npx @supabase/mcp-server-supabase` | projectcontact |
+
+## プロジェクト別設定
+
+### projectcontact
 
 | サーバー | 説明 |
 |---------|------|
-| **serena** | LSPベースのセマンティックコード理解（シンボル検索・編集） |
-| **github** | GitHub CLI 経由の GitHub 操作 |
-| **supabase** | Supabase DB 直接アクセス |
+| serena | start-mcp-server |
+| github | mcp-server |
+| context7 | @upstash/context7-mcp (env: CONTEXT7_API_KEY) |
+| supabase | @supabase/mcp-server-supabase |
 
 ## セットアップ
 
@@ -20,13 +32,12 @@ Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 
 ### 使い方
 
-1. `.mcp.json.example` をコピーして `.mcp.json` を作成
-2. トークン等を自分の環境に合わせて書き換え
-3. プロジェクトルートに `.mcp.json` を配置
+1. `projects/` 配下のプロジェクト別設定を参照
+2. `.mcp.json.example` をコピーして `.mcp.json` を作成
+3. トークン等を自分の環境に合わせて書き換え
 
 ```bash
 cp .mcp.json.example /path/to/your/project/.mcp.json
-# トークンを編集
 ```
 
 ## クラウドMCP（claude.ai管理）
@@ -35,3 +46,7 @@ cp .mcp.json.example /path/to/your/project/.mcp.json
 - Figma MCP
 - Google Calendar MCP
 - Canva MCP
+
+---
+
+*自動生成 by sync-mcp.sh*

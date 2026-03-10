@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "serverName": "serena",
+      "action": "snapshot",
+      "timestamp": "2026-03-10T10:04:49Z",
+      "scope": "project",
+      "project": "C:/dev/software/projectcontact",
+      "projectName": "projectcontact",
+      "config": {
+        "type": "stdio",
+        "command": "uvx",
+        "args": [
+          "--from",
+          "git+https://github.com/oraios/serena",
+          "serena",
+          "start-mcp-server",
+          "--context",
+          "claude-code",
+          "--project",
+          "C:/dev/software/projectcontact"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "start-mcp-server",
+        "command": "uvx"
+      }
+    },
+    {
+      "serverName": "github",
+      "action": "snapshot",
+      "timestamp": "2026-03-10T10:04:49Z",
+      "scope": "project",
+      "project": "C:/dev/software/projectcontact",
+      "projectName": "projectcontact",
+      "config": {
+        "type": "stdio",
+        "command": "gh",
+        "args": [
+          "mcp-server"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "mcp-server",
+        "command": "gh"
+      }
+    },
+    {
+      "serverName": "context7",
+      "action": "snapshot",
+      "timestamp": "2026-03-10T10:04:49Z",
+      "scope": "project",
+      "project": "C:/dev/software/projectcontact",
+      "projectName": "projectcontact",
+      "config": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@upstash/context7-mcp"
+        ],
+        "env": {
+          "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@upstash/context7-mcp",
+        "command": "npx",
+        "requiredEnvVars": [
+          "CONTEXT7_API_KEY"
+        ]
+      }
+    },
+    {
+      "serverName": "supabase",
+      "action": "snapshot",
+      "timestamp": "2026-03-10T10:04:49Z",
+      "scope": "project",
+      "project": "C:/dev/software/projectcontact",
+      "projectName": "projectcontact",
+      "config": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@supabase/mcp-server-supabase",
+          "--supabase-access-token",
+          "sb_publishable__XxJj8i8YaaiBXtnYfiozw_L3uNrU33",
+          "--project-id",
+          "czjdhvtbejywzhprwlbn"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@supabase/mcp-server-supabase",
+        "command": "npx"
+      }
+    }
+  ]
+}
