@@ -1,15 +1,16 @@
-# ~/.claude/ 設定ファイルの変更監視 & 自動同期
-# FileSystemWatcher で .mcp.json, CLAUDE.md, settings.json を監視
-# 変更検知 → 5秒デバウンス → sync-mcp.sh --global を実行
+# Claude Config Watcher (FileSystemWatcher + debounce)
+# ~/.claude/ の設定ファイル変更を検知し sync-mcp.sh --global を自動実行する
 
 $watchDir = Join-Path $env:USERPROFILE ".claude"
 $watchFiles = @(".mcp.json", "CLAUDE.md", "settings.json")
-$syncScript = Join-Path $watchDir "mcp-config\scripts\sync-mcp.sh"
+$syncScript = Join-Path $watchDir "mcp-config" | Join-Path -ChildPath "scripts" | Join-Path -ChildPath "sync-mcp.sh"
+$debounceSeconds = 5
 
-# Git Bash のパスを検出
+# Git Bash を検出
 $gitBash = @(
     "C:\Program Files\Git\bin\bash.exe",
-    "C:\Program Files (x86)\Git\bin\bash.exe"
+    "C:\Program Files (x86)\Git\bin\bash.exe",
+    (Join-Path $env:LOCALAPPDATA "Programs\Git\bin\bash.exe")
 ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if (-not $gitBash) {
@@ -22,54 +23,62 @@ if (-not (Test-Path $syncScript)) {
     exit 1
 }
 
-Write-Host "Claude Config Watcher 起動"
-Write-Host "  監視ディレクトリ: $watchDir"
-Write-Host "  監視ファイル: $($watchFiles -join ', ')"
+# Unix パスに変換
+$syncScriptUnix = & $gitBash -c "cygpath '$($syncScript -replace '\\','/')'" 2>$null
+if (-not $syncScriptUnix) {
+    $syncScriptUnix = $syncScript.Replace('\', '/').Replace('C:', '/c')
+}
 
-# FileSystemWatcher 作成
+Write-Host "Claude Config Watcher started (FileSystemWatcher, debounce ${debounceSeconds}s)"
+Write-Host "  Watch dir: $watchDir"
+Write-Host "  Watch files: $($watchFiles -join ', ')"
+
+# FileSystemWatcher の作成
 $watcher = New-Object System.IO.FileSystemWatcher
 $watcher.Path = $watchDir
 $watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite -bor [System.IO.NotifyFilters]::FileName
-$watcher.EnableRaisingEvents = $false  # ポーリング方式で制御
+$watcher.EnableRaisingEvents = $false
 
-# デバウンス用
 $lastTrigger = [DateTime]::MinValue
-$debounceSeconds = 5
-
-Write-Host "監視開始..."
 
 try {
+    $watcher.EnableRaisingEvents = $true
+    Write-Host "Watching..."
+
     while ($true) {
         $result = $watcher.WaitForChanged(
-            [System.IO.WatcherChangeTypes]::Changed -bor [System.IO.WatcherChangeTypes]::Created,
-            1000  # 1秒タイムアウト
+            [System.IO.WatcherChangeTypes]::Changed -bor
+            [System.IO.WatcherChangeTypes]::Created -bor
+            [System.IO.WatcherChangeTypes]::Renamed,
+            2000  # 2秒タイムアウト
         )
 
-        if ($result.TimedOut) { continue }
+        if (-not $result.TimedOut) {
+            $changedFile = $result.Name
+            if ($watchFiles -contains $changedFile) {
+                $now = [DateTime]::Now
+                $elapsed = ($now - $lastTrigger).TotalSeconds
 
-        # 対象ファイルかチェック
-        if ($result.Name -notin $watchFiles) { continue }
+                if ($elapsed -ge $debounceSeconds) {
+                    $lastTrigger = $now
+                    Write-Host "[$($now.ToString('HH:mm:ss'))] Changed: $changedFile -> running sync-mcp.sh --global..."
 
-        # デバウンス: 前回のトリガーから5秒以内なら無視
-        $now = Get-Date
-        if (($now - $lastTrigger).TotalSeconds -lt $debounceSeconds) { continue }
+                    try {
+                        $proc = Start-Process -FilePath $gitBash `
+                            -ArgumentList "-l", "-c", "`"$syncScriptUnix --global`"" `
+                            -NoNewWindow -Wait -PassThru
 
-        $lastTrigger = $now
-        Write-Host "[$($now.ToString('HH:mm:ss'))] 変更検知: $($result.Name)"
-
-        # 少し待ってからファイルの書き込み完了を確認
-        Start-Sleep -Seconds 2
-
-        Write-Host "[$($now.ToString('HH:mm:ss'))] sync-mcp.sh --global を実行中..."
-        try {
-            $syncScriptUnix = $syncScript -replace '\\', '/'
-            & $gitBash -l -c "$syncScriptUnix --global"
-            Write-Host "[$($now.ToString('HH:mm:ss'))] 同期完了"
-        } catch {
-            Write-Host "[$($now.ToString('HH:mm:ss'))] 同期エラー: $_"
+                        Write-Host "[$($now.ToString('HH:mm:ss'))] Sync complete (exit: $($proc.ExitCode))"
+                    } catch {
+                        Write-Host "[$($now.ToString('HH:mm:ss'))] Sync error: $_"
+                    }
+                } else {
+                    Write-Host "[$($now.ToString('HH:mm:ss'))] Debounce: $changedFile (wait $([math]::Ceiling($debounceSeconds - $elapsed))s)"
+                }
+            }
         }
     }
 } finally {
     $watcher.Dispose()
-    Write-Host "Watcher 終了"
+    Write-Host "Claude Config Watcher stopped"
 }
