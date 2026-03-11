@@ -1,9 +1,12 @@
-# Claude Config Watcher (FileSystemWatcher + debounce)
-# ~/.claude/ の設定ファイル変更を検知し sync-mcp.sh --global を自動実行する
+# Claude Config & Skills Watcher (FileSystemWatcher + Register-ObjectEvent)
+# ~/.claude/ の設定ファイル変更 → sync-mcp.sh --global
+# ~/.claude/plugins/marketplaces/local/ のスキル変更 → sync-skills.sh
 
-$watchDir = Join-Path $env:USERPROFILE ".claude"
+$claudeDir = Join-Path $env:USERPROFILE ".claude"
 $watchFiles = @(".mcp.json", "CLAUDE.md", "settings.json")
-$syncScript = Join-Path $watchDir "mcp-config" | Join-Path -ChildPath "scripts" | Join-Path -ChildPath "sync-mcp.sh"
+$syncMcpScript = Join-Path $claudeDir "mcp-config" | Join-Path -ChildPath "scripts" | Join-Path -ChildPath "sync-mcp.sh"
+$skillsDir = Join-Path $claudeDir "plugins\marketplaces\local"
+$syncSkillsScript = Join-Path $skillsDir "scripts" | Join-Path -ChildPath "sync-skills.sh"
 $debounceSeconds = 5
 
 # Git Bash を検出
@@ -18,67 +21,139 @@ if (-not $gitBash) {
     exit 1
 }
 
-if (-not (Test-Path $syncScript)) {
-    Write-Error "sync-mcp.sh が見つかりません: $syncScript"
+if (-not (Test-Path $syncMcpScript)) {
+    Write-Error "sync-mcp.sh が見つかりません: $syncMcpScript"
     exit 1
 }
 
 # Unix パスに変換
-$syncScriptUnix = & $gitBash -c "cygpath '$($syncScript -replace '\\','/')'" 2>$null
-if (-not $syncScriptUnix) {
-    $syncScriptUnix = $syncScript.Replace('\', '/').Replace('C:', '/c')
+$syncMcpUnix = & $gitBash -c "cygpath '$($syncMcpScript -replace '\\','/')'" 2>$null
+if (-not $syncMcpUnix) {
+    $syncMcpUnix = $syncMcpScript.Replace('\', '/').Replace('C:', '/c')
 }
 
-Write-Host "Claude Config Watcher started (FileSystemWatcher, debounce ${debounceSeconds}s)"
-Write-Host "  Watch dir: $watchDir"
-Write-Host "  Watch files: $($watchFiles -join ', ')"
+$syncSkillsUnix = ""
+if (Test-Path $syncSkillsScript) {
+    $syncSkillsUnix = & $gitBash -c "cygpath '$($syncSkillsScript -replace '\\','/')'" 2>$null
+    if (-not $syncSkillsUnix) {
+        $syncSkillsUnix = $syncSkillsScript.Replace('\', '/').Replace('C:', '/c')
+    }
+}
 
-# FileSystemWatcher の作成
-$watcher = New-Object System.IO.FileSystemWatcher
-$watcher.Path = $watchDir
-$watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite -bor [System.IO.NotifyFilters]::FileName
-$watcher.EnableRaisingEvents = $false
+# --- ウォッチャー #1: 設定ファイル ---
+$configWatcher = New-Object System.IO.FileSystemWatcher
+$configWatcher.Path = $claudeDir
+$configWatcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite -bor [System.IO.NotifyFilters]::FileName
+$configWatcher.EnableRaisingEvents = $true
 
-$lastTrigger = [DateTime]::MinValue
+# --- ウォッチャー #2: スキルディレクトリ ---
+$skillsWatcher = $null
+if (Test-Path $skillsDir) {
+    $skillsWatcher = New-Object System.IO.FileSystemWatcher
+    $skillsWatcher.Path = $skillsDir
+    $skillsWatcher.IncludeSubdirectories = $true
+    $skillsWatcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite -bor
+                                   [System.IO.NotifyFilters]::FileName -bor
+                                   [System.IO.NotifyFilters]::DirectoryName
+    $skillsWatcher.EnableRaisingEvents = $true
+}
+
+# 共通: デバウンス・状態変数
+$script:pendingConfig = $false
+$script:pendingSkills = $false
+$script:lastConfigTrigger = [DateTime]::MinValue
+$script:lastSkillsTrigger = [DateTime]::MinValue
+$script:syncing = $false
+
+# イベントアクション
+$configAction = {
+    if ($script:syncing) { return }
+    $name = $Event.SourceEventArgs.Name
+    if ($watchFiles -contains $name) {
+        $script:pendingConfig = $true
+    }
+}
+
+$skillsAction = {
+    if ($script:syncing) { return }
+    $path = $Event.SourceEventArgs.FullPath
+    # .git 配下の変更は無視（無限ループ防止）
+    if ($path -match '[\\/]\.git[\\/]') { return }
+    $script:pendingSkills = $true
+}
+
+# イベント登録
+Register-ObjectEvent $configWatcher "Changed" -Action $configAction | Out-Null
+Register-ObjectEvent $configWatcher "Created" -Action $configAction | Out-Null
+Register-ObjectEvent $configWatcher "Renamed" -Action $configAction | Out-Null
+
+if ($skillsWatcher) {
+    Register-ObjectEvent $skillsWatcher "Changed" -Action $skillsAction | Out-Null
+    Register-ObjectEvent $skillsWatcher "Created" -Action $skillsAction | Out-Null
+    Register-ObjectEvent $skillsWatcher "Deleted" -Action $skillsAction | Out-Null
+    Register-ObjectEvent $skillsWatcher "Renamed" -Action $skillsAction | Out-Null
+}
+
+Write-Host "Claude Config & Skills Watcher started (debounce ${debounceSeconds}s)"
+Write-Host "  Config watch: $claudeDir ($($watchFiles -join ', '))"
+if ($skillsWatcher) {
+    Write-Host "  Skills watch: $skillsDir (recursive)"
+}
+Write-Host "Watching..."
 
 try {
-    $watcher.EnableRaisingEvents = $true
-    Write-Host "Watching..."
-
     while ($true) {
-        $result = $watcher.WaitForChanged(
-            [System.IO.WatcherChangeTypes]::Changed -bor
-            [System.IO.WatcherChangeTypes]::Created -bor
-            [System.IO.WatcherChangeTypes]::Renamed,
-            2000  # 2秒タイムアウト
-        )
+        Start-Sleep -Seconds 1
 
-        if (-not $result.TimedOut) {
-            $changedFile = $result.Name
-            if ($watchFiles -contains $changedFile) {
-                $now = [DateTime]::Now
-                $elapsed = ($now - $lastTrigger).TotalSeconds
+        $now = [DateTime]::Now
 
-                if ($elapsed -ge $debounceSeconds) {
-                    $lastTrigger = $now
-                    Write-Host "[$($now.ToString('HH:mm:ss'))] Changed: $changedFile -> running sync-mcp.sh --global..."
+        # 設定ファイル同期
+        if ($script:pendingConfig) {
+            $elapsed = ($now - $script:lastConfigTrigger).TotalSeconds
+            if ($elapsed -ge $debounceSeconds) {
+                $script:syncing = $true
+                $script:pendingConfig = $false
+                $script:lastConfigTrigger = $now
 
-                    try {
-                        $proc = Start-Process -FilePath $gitBash `
-                            -ArgumentList "-l", "-c", "`"$syncScriptUnix --global`"" `
-                            -NoNewWindow -Wait -PassThru
-
-                        Write-Host "[$($now.ToString('HH:mm:ss'))] Sync complete (exit: $($proc.ExitCode))"
-                    } catch {
-                        Write-Host "[$($now.ToString('HH:mm:ss'))] Sync error: $_"
-                    }
-                } else {
-                    Write-Host "[$($now.ToString('HH:mm:ss'))] Debounce: $changedFile (wait $([math]::Ceiling($debounceSeconds - $elapsed))s)"
+                Write-Host "[$($now.ToString('HH:mm:ss'))] Config changed -> running sync-mcp.sh --global..."
+                try {
+                    $proc = Start-Process -FilePath $gitBash `
+                        -ArgumentList "-l", "-c", "`"$syncMcpUnix --global`"" `
+                        -NoNewWindow -Wait -PassThru
+                    Write-Host "[$($now.ToString('HH:mm:ss'))] Config sync complete (exit: $($proc.ExitCode))"
+                } catch {
+                    Write-Host "[$($now.ToString('HH:mm:ss'))] Config sync error: $_"
                 }
+
+                $script:syncing = $false
+            }
+        }
+
+        # スキル同期
+        if ($script:pendingSkills) {
+            $elapsed = ($now - $script:lastSkillsTrigger).TotalSeconds
+            if ($elapsed -ge $debounceSeconds) {
+                $script:syncing = $true
+                $script:pendingSkills = $false
+                $script:lastSkillsTrigger = $now
+
+                Write-Host "[$($now.ToString('HH:mm:ss'))] Skills changed -> running sync-skills.sh..."
+                try {
+                    $proc = Start-Process -FilePath $gitBash `
+                        -ArgumentList "-l", "-c", "`"$syncSkillsUnix`"" `
+                        -NoNewWindow -Wait -PassThru
+                    Write-Host "[$($now.ToString('HH:mm:ss'))] Skills sync complete (exit: $($proc.ExitCode))"
+                } catch {
+                    Write-Host "[$($now.ToString('HH:mm:ss'))] Skills sync error: $_"
+                }
+
+                $script:syncing = $false
             }
         }
     }
 } finally {
-    $watcher.Dispose()
-    Write-Host "Claude Config Watcher stopped"
+    $configWatcher.Dispose()
+    if ($skillsWatcher) { $skillsWatcher.Dispose() }
+    Get-EventSubscriber | Unregister-Event
+    Write-Host "Claude Config & Skills Watcher stopped"
 }
