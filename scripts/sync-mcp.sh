@@ -165,6 +165,15 @@ sync_global_config() {
   if [ "$changed" -eq 0 ]; then
     echo "グローバル設定に変更はありません"
   fi
+
+  # chezmoi にも同期（autoCommit + autoPush で自動push）
+  if command -v chezmoi &>/dev/null; then
+    for f in "${GLOBAL_FILES[@]}"; do
+      local src="$CLAUDE_DIR/$f"
+      [ -f "$src" ] && chezmoi add "$src" 2>/dev/null
+    done
+    echo "chezmoi にも同期しました"
+  fi
 }
 
 # ---- 5. グローバル設定をデプロイ (リポジトリ → ローカル) ----
