@@ -2,16 +2,38 @@
 
 Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 
-## MCPサーバー一覧
+## グローバルMCPサーバー
+
+`~/.claude/.mcp.json` で管理されるサーバー。全プロジェクトで利用可能。
+
+### 設定不要（そのまま使える）
+
+| サーバー | タイプ | コマンド/URL |
+|---------|--------|------------|
+| **serena** | stdio | `uvx serena-mcp` |
+| **github** | stdio | `gh mcp-server` |
+| **context7** | stdio | `npx @upstash/context7-mcp` |
+| **playwright** | stdio | `npx @playwright/mcp@latest` |
+| **supabase** | http | `https://mcp.supabase.com/mcp` |
+
+### 要環境変数（初回接続時に値を設定する）
+
+| サーバー | タイプ | 必要な環境変数 |
+|---------|--------|--------------|
+| **vercel** | stdio | `VERCEL_ACCESS_TOKEN` |
+| **ebay-public-api** | stdio | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET` |
+| **ebay-mcp** | stdio | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET`, `EBAY_DEV_ID`, `EBAY_REDIRECT_URI` |
+
+## プロジェクト別MCPサーバー
 
 | サーバー | タイプ | コマンド/URL | 使用プロジェクト |
 |---------|--------|------------|----------------|
 | **serena** | stdio | `uvx start-mcp-server` | projectcontact |
-| **github** | stdio | `gh mcp-server` | projectcontact |
-| **context7** | stdio | `npx @upstash/context7-mcp` | projectcontact |
-| **supabase** | stdio | `npx @supabase/mcp-server-supabase` | projectcontact |
-
-## プロジェクト別設定
+| **github** | stdio | `gh` | projectcontact, ebay-dashboard |
+| **context7** | stdio | `npx @upstash/context7-mcp` | projectcontact, ebay-dashboard |
+| **supabase** | http | `` | projectcontact, ebay-dashboard |
+| **playwright** | stdio | `npx @playwright/mcp` | ebay-dashboard |
+| **vercel** | stdio | `npx @vercel/mcp` | ebay-dashboard |
 
 ### projectcontact
 
@@ -22,6 +44,16 @@ Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 | context7 | @upstash/context7-mcp (env: CONTEXT7_API_KEY) |
 | supabase | @supabase/mcp-server-supabase |
 
+### ebay-dashboard
+
+| サーバー | 説明 |
+|---------|------|
+| supabase |  |
+| github | gh |
+| context7 | @upstash/context7-mcp |
+| playwright | @playwright/mcp |
+| vercel | @vercel/mcp (env: VERCEL_ACCESS_TOKEN) |
+
 ## セットアップ
 
 ### 前提条件
@@ -30,14 +62,31 @@ Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 - [GitHub CLI](https://cli.github.com/) (`gh` コマンド)
 - [Node.js](https://nodejs.org/) (`npx` コマンド)
 
-### 使い方
-
-1. `projects/` 配下のプロジェクト別設定を参照
-2. `.mcp.json.example` をコピーして `.mcp.json` を作成
-3. トークン等を自分の環境に合わせて書き換え
+### 新マシンセットアップ
 
 ```bash
-cp .mcp.json.example /path/to/your/project/.mcp.json
+# 1. リポジトリをクローン
+git clone https://github.com/yukiko10140422-star/mcp-config.git ~/.claude/mcp-config
+
+# 2. グローバル設定をデプロイ
+cd ~/.claude/mcp-config
+./scripts/sync-mcp.sh --deploy
+
+# 3. 環境変数を設定（必要なサーバーのみ）
+# VERCEL_ACCESS_TOKEN, EBAY_CLIENT_ID 等を設定
+```
+
+### 使い方
+
+```bash
+# プロジェクトの.mcp.json変更を同期
+./scripts/sync-mcp.sh /path/to/project/.mcp.json
+
+# グローバル設定を同期（~/.claude/ → リポジトリ）
+./scripts/sync-mcp.sh --global
+
+# グローバル設定をデプロイ（リポジトリ → ~/.claude/）
+./scripts/sync-mcp.sh --deploy
 ```
 
 ## クラウドMCP（claude.ai管理）
