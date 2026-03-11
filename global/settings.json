@@ -1,0 +1,30 @@
+{
+  "enabledPlugins": {
+    "company@cc-company": true,
+    "example-skills@anthropic-agent-skills": true,
+    "mcp-manager@claude-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "cc-company": {
+      "source": {
+        "source": "github",
+        "repo": "Shin-sibainu/cc-company"
+      }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "claude-skills": {
+      "source": {
+        "source": "github",
+        "repo": "yukiko10140422-star/claude-skills"
+      }
+    }
+  },
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true,
+  "voiceEnabled": true
+}

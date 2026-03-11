@@ -99,6 +99,329 @@
         "packageName": "@supabase/mcp-server-supabase",
         "command": "npx"
       }
+    },
+    {
+      "serverName": "supabase",
+      "action": "added",
+      "timestamp": "2026-03-10T16:00:00Z",
+      "scope": "project",
+      "project": "C:/Users/k3n70/Desktop/ebay-dashboard",
+      "projectName": "ebay-dashboard",
+      "config": {
+        "type": "http",
+        "url": "https://mcp.supabase.com/mcp"
+      },
+      "meta": {
+        "serverType": "http",
+        "category": "Database",
+        "description": "Supabase DB操作・マイグレーション管理（HTTP版）",
+        "catalogRef": "supabase",
+        "pluginAvailable": true,
+        "tags": [
+          "database",
+          "supabase",
+          "postgresql"
+        ]
+      }
+    },
+    {
+      "serverName": "github",
+      "action": "added",
+      "timestamp": "2026-03-10T16:00:00Z",
+      "scope": "project",
+      "project": "C:/Users/k3n70/Desktop/ebay-dashboard",
+      "projectName": "ebay-dashboard",
+      "config": {
+        "command": "gh",
+        "args": [
+          "mcp-server"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "category": "Version Control",
+        "description": "GitHub Issues/PR/Actions操作",
+        "catalogRef": "github",
+        "pluginAvailable": true,
+        "command": "gh",
+        "tags": [
+          "github",
+          "git",
+          "version-control"
+        ]
+      }
+    },
+    {
+      "serverName": "context7",
+      "action": "added",
+      "timestamp": "2026-03-10T16:00:00Z",
+      "scope": "project",
+      "project": "C:/Users/k3n70/Desktop/ebay-dashboard",
+      "projectName": "ebay-dashboard",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@upstash/context7-mcp"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@upstash/context7-mcp",
+        "category": "Documentation",
+        "description": "ライブラリ最新ドキュメント参照",
+        "catalogRef": "context7",
+        "pluginAvailable": true,
+        "command": "npx",
+        "tags": [
+          "documentation",
+          "reference"
+        ]
+      }
+    },
+    {
+      "serverName": "playwright",
+      "action": "added",
+      "timestamp": "2026-03-10T16:00:00Z",
+      "scope": "project",
+      "project": "C:/Users/k3n70/Desktop/ebay-dashboard",
+      "projectName": "ebay-dashboard",
+      "config": {
+        "command": "npx",
+        "args": [
+          "@playwright/mcp@latest"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@playwright/mcp",
+        "category": "Browser Automation",
+        "description": "ブラウザ操作・E2Eテスト・スクリーンショット",
+        "catalogRef": "playwright",
+        "pluginAvailable": true,
+        "command": "npx",
+        "tags": [
+          "browser",
+          "testing",
+          "e2e"
+        ]
+      }
+    },
+    {
+      "serverName": "vercel",
+      "action": "added",
+      "timestamp": "2026-03-10T16:00:00Z",
+      "scope": "project",
+      "project": "C:/Users/k3n70/Desktop/ebay-dashboard",
+      "projectName": "ebay-dashboard",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@vercel/mcp@latest"
+        ],
+        "env": {
+          "VERCEL_ACCESS_TOKEN": "${VERCEL_ACCESS_TOKEN}"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@vercel/mcp",
+        "category": "Cloud & Infrastructure",
+        "description": "Vercelデプロイ管理・環境変数・ログ",
+        "catalogRef": "vercel",
+        "pluginAvailable": false,
+        "command": "npx",
+        "requiredEnvVars": [
+          "VERCEL_ACCESS_TOKEN"
+        ],
+        "tags": [
+          "vercel",
+          "deploy",
+          "infrastructure"
+        ]
+      }
+    },
+    {
+      "serverName": "serena",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "uvx",
+        "args": [
+          "serena-mcp"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "serena-mcp",
+        "command": "uvx"
+      }
+    },
+    {
+      "serverName": "github",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "gh",
+        "args": [
+          "mcp-server"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "mcp-server",
+        "command": "gh"
+      }
+    },
+    {
+      "serverName": "context7",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@upstash/context7-mcp"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@upstash/context7-mcp",
+        "command": "npx"
+      }
+    },
+    {
+      "serverName": "playwright",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "npx",
+        "args": [
+          "@playwright/mcp@latest"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@playwright/mcp",
+        "command": "npx"
+      }
+    },
+    {
+      "serverName": "vercel",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@vercel/mcp@latest"
+        ],
+        "env": {
+          "VERCEL_ACCESS_TOKEN": "${VERCEL_ACCESS_TOKEN}"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@vercel/mcp",
+        "command": "npx",
+        "requiredEnvVars": [
+          "VERCEL_ACCESS_TOKEN"
+        ]
+      }
+    },
+    {
+      "serverName": "supabase",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "type": "http",
+        "url": "https://mcp.supabase.com/mcp"
+      },
+      "meta": {
+        "serverType": "http",
+        "url": "https://mcp.supabase.com/mcp"
+      }
+    },
+    {
+      "serverName": "ebay-public-api",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@ebay/npm-public-api-mcp@latest"
+        ],
+        "env": {
+          "EBAY_CLIENT_ID": "${EBAY_CLIENT_ID}",
+          "EBAY_CLIENT_SECRET": "${EBAY_CLIENT_SECRET}",
+          "EBAY_API_ENV": "production"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@ebay/npm-public-api-mcp",
+        "command": "npx",
+        "requiredEnvVars": [
+          "EBAY_CLIENT_ID",
+          "EBAY_CLIENT_SECRET"
+        ]
+      }
+    },
+    {
+      "serverName": "ebay-mcp",
+      "action": "snapshot",
+      "timestamp": "2026-03-11T18:51:45Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "ebay-mcp"
+        ],
+        "env": {
+          "EBAY_CLIENT_ID": "${EBAY_CLIENT_ID}",
+          "EBAY_CLIENT_SECRET": "${EBAY_CLIENT_SECRET}",
+          "EBAY_DEV_ID": "${EBAY_DEV_ID}",
+          "EBAY_ENVIRONMENT": "production",
+          "EBAY_REDIRECT_URI": "${EBAY_REDIRECT_URI}"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "ebay-mcp",
+        "command": "npx",
+        "requiredEnvVars": [
+          "EBAY_CLIENT_ID",
+          "EBAY_CLIENT_SECRET",
+          "EBAY_DEV_ID",
+          "EBAY_REDIRECT_URI"
+        ]
+      }
     }
   ]
 }

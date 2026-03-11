@@ -1,3 +1,10 @@
 # Actual config with tokens
 .mcp.json
 !.mcp.json.example
+!global/.mcp.json
+
+# セキュリティ: 万が一コピーされた場合の安全策
+global/.credentials.json
+global/history.jsonl
+.env
+*.env
