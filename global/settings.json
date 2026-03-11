@@ -26,6 +26,5 @@
   },
   "autoUpdatesChannel": "latest",
   "skipDangerousModePermissionPrompt": true,
-  "voiceEnabled": true,
-  "_test": true
+  "voiceEnabled": true
 }
