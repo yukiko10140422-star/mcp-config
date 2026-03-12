@@ -10,8 +10,8 @@ Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 
 | サーバー | タイプ | コマンド/URL |
 |---------|--------|------------|
-| **serena** | stdio | `uvx serena-mcp` |
-| **github** | stdio | `gh mcp-server` |
+| **serena** | stdio | `uvx serena-cli` |
+| **github** | stdio | `gh` |
 | **context7** | stdio | `npx @upstash/context7-mcp` |
 | **playwright** | stdio | `npx @playwright/mcp@latest` |
 | **supabase** | http | `https://mcp.supabase.com/mcp` |

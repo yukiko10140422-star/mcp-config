@@ -422,6 +422,43 @@
           "EBAY_REDIRECT_URI"
         ]
       }
+    },
+    {
+      "serverName": "serena",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:34:39Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "uvx",
+        "args": [
+          "serena-cli"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "serena-cli",
+        "command": "uvx"
+      }
+    },
+    {
+      "serverName": "github",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:34:39Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "gh",
+        "args": [
+          "mcp"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "command": "gh"
+      }
     }
   ]
 }

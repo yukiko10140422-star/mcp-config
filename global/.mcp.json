@@ -2,11 +2,11 @@
   "mcpServers": {
     "serena": {
       "command": "uvx",
-      "args": ["serena-mcp"]
+      "args": ["serena-cli"]
     },
     "github": {
       "command": "gh",
-      "args": ["mcp-server"]
+      "args": ["mcp"]
     },
     "context7": {
       "command": "npx",
