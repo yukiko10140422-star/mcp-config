@@ -17,23 +17,30 @@
 - .env ファイルは絶対にコミットしない
 - ファイル削除や破壊的操作は事前に確認を取る
 
-## MCP サーバー（グローバル設定）
+## MCP サーバー
 
-以下の MCP サーバーがグローバル（`~/.claude/.mcp.json`）に設定済み。
+設定ファイル: `~/.claude.json`（`mcpServers` セクション）
 環境変数が未設定のサーバーは接続時にエラーになるため、初回利用時にオーナーへ確認すること。
 
-### 設定不要（そのまま使える）
-| サーバー | 用途 |
-|---------|------|
-| serena | コード解析・ナビゲーション |
-| github | GitHub操作（ghが認証管理） |
-| context7 | ライブラリドキュメント検索 |
-| playwright | ブラウザ自動操作・テスト |
-| supabase | Supabase操作（HTTP型、ブラウザ認証） |
+### グローバル（全プロジェクト共通）
+| サーバー | 用途 | 備考 |
+|---------|------|------|
+| serena | コード解析・ナビゲーション | `uvx --from git+https://github.com/oraios/serena` |
+| github | GitHub操作 | `gh mcp`（`shuymn/gh-mcp` 拡張） |
+| context7 | ライブラリドキュメント検索 | |
+| playwright | ブラウザ自動操作・テスト | |
+| supabase | Supabase操作（HTTP型） | 初回ブラウザ認証が必要 |
+| ebay-mcp | eBay操作（フル機能） | 環境変数要設定 |
+| ebay-public-api | eBay公開API | 環境変数要設定 |
+| vercel | Vercel操作 | プロジェクトごとにトークン設定推奨 |
+
+### プロジェクト別設定の方法
+Vercel等、プロジェクト固有のトークンが必要なサーバーは各プロジェクトの `.claude/.mcp.json` に設定する。
+グローバルは未接続のまま残し、プロジェクト単位で上書き可能。
 
 ### 要環境変数（初回接続時にオーナーへ値を確認する）
 | サーバー | 必要な環境変数 |
 |---------|--------------|
-| vercel | `VERCEL_ACCESS_TOKEN` |
+| vercel | `VERCEL_ACCESS_TOKEN`（プロジェクトごとに設定推奨） |
 | ebay-public-api | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET` |
 | ebay-mcp | `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET`, `EBAY_DEV_ID`, `EBAY_REDIRECT_URI` |
