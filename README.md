@@ -10,7 +10,7 @@ Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 
 | サーバー | タイプ | コマンド/URL |
 |---------|--------|------------|
-| **serena** | stdio | `uvx serena-cli` |
+| **serena** | stdio | `uvx start-mcp-server` |
 | **github** | stdio | `gh` |
 | **context7** | stdio | `npx @upstash/context7-mcp` |
 | **playwright** | stdio | `npx @playwright/mcp@latest` |

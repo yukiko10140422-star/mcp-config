@@ -459,6 +459,30 @@
         "serverType": "stdio",
         "command": "gh"
       }
+    },
+    {
+      "serverName": "serena",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:48:04Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "uvx",
+        "args": [
+          "--from",
+          "git+https://github.com/oraios/serena",
+          "serena",
+          "start-mcp-server",
+          "--context",
+          "claude-code"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "start-mcp-server",
+        "command": "uvx"
+      }
     }
   ]
 }
