@@ -483,6 +483,143 @@
         "packageName": "start-mcp-server",
         "command": "uvx"
       }
+    },
+    {
+      "serverName": "context7",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:53:35Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "-y",
+          "@upstash/context7-mcp"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@upstash/context7-mcp",
+        "command": "cmd"
+      }
+    },
+    {
+      "serverName": "playwright",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:53:35Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "@playwright/mcp@latest"
+        ]
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@playwright/mcp",
+        "command": "cmd"
+      }
+    },
+    {
+      "serverName": "vercel",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:53:35Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "-y",
+          "@vercel/mcp@latest"
+        ],
+        "env": {
+          "VERCEL_ACCESS_TOKEN": "${VERCEL_ACCESS_TOKEN}"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@vercel/mcp",
+        "command": "cmd",
+        "requiredEnvVars": [
+          "VERCEL_ACCESS_TOKEN"
+        ]
+      }
+    },
+    {
+      "serverName": "ebay-public-api",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:53:35Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "-y",
+          "@ebay/npm-public-api-mcp@latest"
+        ],
+        "env": {
+          "EBAY_CLIENT_ID": "${EBAY_CLIENT_ID}",
+          "EBAY_CLIENT_SECRET": "${EBAY_CLIENT_SECRET}",
+          "EBAY_API_ENV": "production"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "@ebay/npm-public-api-mcp",
+        "command": "cmd",
+        "requiredEnvVars": [
+          "EBAY_CLIENT_ID",
+          "EBAY_CLIENT_SECRET"
+        ]
+      }
+    },
+    {
+      "serverName": "ebay-mcp",
+      "action": "snapshot",
+      "timestamp": "2026-03-12T06:53:35Z",
+      "scope": "global",
+      "project": "global",
+      "projectName": "global",
+      "config": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "-y",
+          "ebay-mcp"
+        ],
+        "env": {
+          "EBAY_CLIENT_ID": "${EBAY_CLIENT_ID}",
+          "EBAY_CLIENT_SECRET": "${EBAY_CLIENT_SECRET}",
+          "EBAY_DEV_ID": "${EBAY_DEV_ID}",
+          "EBAY_ENVIRONMENT": "production",
+          "EBAY_REDIRECT_URI": "${EBAY_REDIRECT_URI}"
+        }
+      },
+      "meta": {
+        "serverType": "stdio",
+        "packageName": "ebay-mcp",
+        "command": "cmd",
+        "requiredEnvVars": [
+          "EBAY_CLIENT_ID",
+          "EBAY_CLIENT_SECRET",
+          "EBAY_DEV_ID",
+          "EBAY_REDIRECT_URI"
+        ]
+      }
     }
   ]
 }

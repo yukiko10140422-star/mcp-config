@@ -12,8 +12,8 @@ Claude Code で使用する MCP サーバーの設定管理リポジトリ。
 |---------|--------|------------|
 | **serena** | stdio | `uvx start-mcp-server` |
 | **github** | stdio | `gh` |
-| **context7** | stdio | `npx @upstash/context7-mcp` |
-| **playwright** | stdio | `npx @playwright/mcp@latest` |
+| **context7** | stdio | `cmd @upstash/context7-mcp` |
+| **playwright** | stdio | `cmd @playwright/mcp@latest` |
 | **supabase** | http | `https://mcp.supabase.com/mcp` |
 
 ### 要環境変数（初回接続時に値を設定する）
